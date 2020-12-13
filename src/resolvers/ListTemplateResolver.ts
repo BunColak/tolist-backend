@@ -1,5 +1,6 @@
 import {
   Arg,
+  Authorized,
   Ctx,
   FieldResolver,
   Mutation,
@@ -8,8 +9,10 @@ import {
   Root
 } from 'type-graphql'
 import { Context } from '../context'
+import { RoleType } from '../auth'
 import ListTemplate, { AddListTemplateInput } from '../models/ListTemplate'
 import TodoTemplate from '../models/TodoTemplate'
+import User from '../models/User'
 
 @Resolver((of) => ListTemplate)
 export default class ListTemplateResolver {
@@ -24,17 +27,24 @@ export default class ListTemplateResolver {
   }
 
   @Mutation((returns) => ListTemplate)
-  async addListTemplate (
+  @Authorized()
+  async createListTemplate (
     @Arg('data') data: AddListTemplateInput,
     @Ctx() ctx: Context
   ) {
-    const todosToCreate = data.todos.map((todo) => ({ text: todo }))
-
     const listTemplate = await ctx.prisma.listTemplate.create({
       data: {
+        user: {
+          connect: { id: ctx.user.id }
+        },
         title: data.title,
         todos: {
-          create: todosToCreate
+          create: data.todos.map((todo) => ({
+            text: todo,
+            user: {
+              connect: { id: ctx.user.id }
+            }
+          }))
         }
       }
     })
@@ -43,6 +53,7 @@ export default class ListTemplateResolver {
   }
 
   @Mutation((returns) => ListTemplate)
+  @Authorized<RoleType>(['owner', 'admin'])
   async deleteListTemplate (@Arg('id') id: number, @Ctx() ctx: Context) {
     await ctx.prisma.todoTemplate.deleteMany({ where: { templateId: id } })
     return ctx.prisma.listTemplate.delete({ where: { id } })
@@ -52,6 +63,13 @@ export default class ListTemplateResolver {
   async todos (@Root() listTemplate: ListTemplate, @Ctx() ctx: Context) {
     return ctx.prisma.todoTemplate.findMany({
       where: { templateId: listTemplate.id }
+    })
+  }
+
+  @FieldResolver((returns) => User)
+  async user (@Root() listTemplate: ListTemplate, @Ctx() ctx: Context) {
+    return ctx.prisma.user.findFirst({
+      where: { id: listTemplate.userId }
     })
   }
 }

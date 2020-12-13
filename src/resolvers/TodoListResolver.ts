@@ -1,4 +1,5 @@
-import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
+import { Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql'
+import { RoleType } from '../auth'
 import { Context } from '../context'
 import { Todo } from '../models/Todo'
 import TodoList from '../models/TodoList'
@@ -12,6 +13,7 @@ export default class TodoListResolver {
   }
 
   @Mutation((returns) => TodoList)
+  @Authorized()
   async createTodoListFromTemplate (@Arg('templateId') templateId: number, @Ctx() ctx: Context) {
     const todoTemplates = await ctx.prisma.todoTemplate.findMany({
       where: { templateId }
@@ -20,13 +22,19 @@ export default class TodoListResolver {
       data: {
         template: { connect: { id: templateId } },
         todos: {
-          create: todoTemplates.map((todo) => ({ text: todo.text }))
+          create: todoTemplates.map((todo) => ({ text: todo.text, user: { connect: { id: ctx.user.id } } }))
+        },
+        user: {
+          connect: {
+            id: ctx.user.id
+          }
         }
       }
     })
   }
 
   @Mutation(returns => TodoList)
+  @Authorized<RoleType>(['owner', 'admin'])
   async deleteTodoList (@Arg('id') id: number, @Ctx() ctx: Context) {
     await ctx.prisma.todo.deleteMany({ where: { listId: id } })
     return ctx.prisma.todoList.delete({ where: { id } })

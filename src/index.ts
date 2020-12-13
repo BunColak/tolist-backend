@@ -5,16 +5,17 @@ import { createContext } from './context'
 import ListTemplateResolver from './resolvers/ListTemplateResolver'
 import TodoTemplateResolver from './resolvers/TodoTemplateResolver'
 import TodoListResolver from './resolvers/TodoListResolver'
+import { customAuthChecker } from './auth'
+import UserResolver from './resolvers/UserResolver'
 const PORT = process.env.PORT || 4000
 
 const startServer = async () => {
   const schema = await buildSchema({
-    resolvers: [ListTemplateResolver, TodoTemplateResolver, TodoListResolver]
+    resolvers: [ListTemplateResolver, TodoTemplateResolver, TodoListResolver, UserResolver],
+    authChecker: customAuthChecker
   })
 
-  const context = createContext()
-
-  new ApolloServer({ schema, context, introspection: true }).listen({ port: PORT }).then(() => {
+  new ApolloServer({ schema, context: createContext, introspection: true }).listen({ port: PORT }).then(() => {
     console.log('server is running on ' + PORT)
   })
 }
