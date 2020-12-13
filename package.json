@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
-    "build": "tsc 'src/**/*.ts'",
+    "build": "tsc -p tsconfig.json",
     "start": "node build/index"
   },
   "devDependencies": {
