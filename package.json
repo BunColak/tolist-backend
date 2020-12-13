@@ -5,7 +5,9 @@
   "author": "Bun Colak <bunyamincolak@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts"
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+    "build": "tsc 'src/**/*.ts'",
+    "start": "node build/index"
   },
   "devDependencies": {
     "@prisma/cli": "2.13.0",
