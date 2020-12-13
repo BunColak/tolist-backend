@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Todo {
+  id Int @id @default(autoincrement())
+  text String
+  completed Boolean
+}
+
+model TodoTemplate {
+  id Int @id @default(autoincrement())
+  text String
+  template ListTemplate @relation(fields: [templateId], references: [id])
+  templateId Int
+}
+
+model ListTemplate {
+  id Int @id @default(autoincrement())
+  todos TodoTemplate[]
+}
