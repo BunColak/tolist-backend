@@ -14,7 +14,7 @@ const startServer = async () => {
 
   const context = createContext()
 
-  new ApolloServer({ schema, context }).listen({ port: PORT }).then(() => {
+  new ApolloServer({ schema, context, introspection: true }).listen({ port: PORT }).then(() => {
     console.log('server is running on ' + PORT)
   })
 }
