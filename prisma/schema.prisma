@@ -27,6 +27,7 @@ model TodoTemplate {
 
 model ListTemplate {
   id Int @id @default(autoincrement())
+  title String
   todos TodoTemplate[]
 }
 

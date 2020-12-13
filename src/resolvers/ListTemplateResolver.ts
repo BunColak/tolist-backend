@@ -32,6 +32,7 @@ export default class ListTemplateResolver {
 
     const listTemplate = await ctx.prisma.listTemplate.create({
       data: {
+        title: data.title,
         todos: {
           create: todosToCreate
         }

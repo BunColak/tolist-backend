@@ -6,12 +6,18 @@ export default class ListTemplate {
   @Field()
   id: number;
 
+  @Field()
+  title: string;
+
   @Field((type) => [TodoTemplate])
   todos: TodoTemplate[];
 }
 
 @InputType()
 export class AddListTemplateInput {
-    @Field(type => [String])
-    todos: string[]
+  @Field()
+  title: string;
+
+  @Field(type => [String])
+  todos: string[]
 }
