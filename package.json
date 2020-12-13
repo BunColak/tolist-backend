@@ -10,6 +10,9 @@
     "start": "node build/index",
     "heroku-postbuild": "prisma migrate deploy"
   },
+  "engines": {
+    "node": "12"
+  },
   "devDependencies": {
     "@prisma/cli": "2.13.0",
     "@types/node": "^14.14.13",
