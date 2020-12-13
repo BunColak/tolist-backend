@@ -11,7 +11,7 @@
     "heroku-postbuild": "prisma migrate deploy --preview-feature"
   },
   "engines": {
-    "node": "lts"
+    "node": "14.x"
   },
   "devDependencies": {
     "@prisma/cli": "2.13.0",
