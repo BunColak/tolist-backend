@@ -13,7 +13,6 @@ export default class User {
     @Field()
     username: string
 
-    @Field()
     password: string
 
     @Field(type => [TodoList])
