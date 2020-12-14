@@ -25,8 +25,8 @@ model TodoTemplate {
   text       String
   template   ListTemplate @relation(fields: [templateId], references: [id])
   templateId Int
-  user     User           @relation(fields: [userId], references: [id])
-  userId   Int
+  user       User         @relation(fields: [userId], references: [id])
+  userId     Int
 }
 
 model ListTemplate {
@@ -40,6 +40,7 @@ model ListTemplate {
 
 model TodoList {
   id         Int          @id @default(autoincrement())
+  title      String?
   todos      Todo[]
   template   ListTemplate @relation(fields: [templateId], references: [id])
   templateId Int
@@ -48,11 +49,12 @@ model TodoList {
 }
 
 model User {
-  id        Int            @id @default(autoincrement())
-  username  String         @unique
-  email     String         @unique
-  password  String
-  templates ListTemplate[]
-  lists     TodoList[]
-  Todo      Todo[]
+  id           Int            @id @default(autoincrement())
+  username     String         @unique
+  email        String         @unique
+  password     String
+  templates    ListTemplate[]
+  lists        TodoList[]
+  Todo         Todo[]
+  TodoTemplate TodoTemplate[]
 }

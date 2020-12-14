@@ -2,25 +2,44 @@ import { Arg, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root } 
 import { RoleType } from '../auth'
 import { Context } from '../context'
 import { Todo } from '../models/Todo'
-import TodoList from '../models/TodoList'
+import TodoList, { CreateTodoListFromTemplateInput } from '../models/TodoList'
 import TodoTemplate from '../models/TodoTemplate'
 
 @Resolver((of) => TodoList)
 export default class TodoListResolver {
   @Query((returns) => [TodoList])
+  @Authorized()
+  async myTodoLists (@Ctx() ctx: Context) {
+    return ctx.prisma.todoList.findMany({ where: { userId: ctx.user.id } })
+  }
+
+  @Query((returns) => [TodoList])
   async todoLists (@Ctx() ctx: Context) {
     return ctx.prisma.todoList.findMany()
   }
 
+  @Query((returns) => TodoList)
+  async todoList (@Arg('id') id: number, @Ctx() ctx: Context) {
+    return ctx.prisma.todoList.findFirst({ where: { id } })
+  }
+
   @Mutation((returns) => TodoList)
   @Authorized()
-  async createTodoListFromTemplate (@Arg('templateId') templateId: number, @Ctx() ctx: Context) {
+  async createTodoListFromTemplate (@Arg('data') data: CreateTodoListFromTemplateInput, @Ctx() ctx: Context) {
+    const template = data.title
+      ? null
+      : await ctx.prisma.listTemplate.findFirst({
+        where: { id: data.templateId }
+      })
+
     const todoTemplates = await ctx.prisma.todoTemplate.findMany({
-      where: { templateId }
+      where: { templateId: data.templateId }
     })
+
     return ctx.prisma.todoList.create({
       data: {
-        template: { connect: { id: templateId } },
+        template: { connect: { id: data.templateId } },
+        title: data.title || template.title,
         todos: {
           create: todoTemplates.map((todo) => ({ text: todo.text, user: { connect: { id: ctx.user.id } } }))
         },
@@ -49,6 +68,6 @@ export default class TodoListResolver {
 
   @FieldResolver((returns) => [Todo])
   async todos (@Root() todoList: TodoList, @Ctx() ctx: Context) {
-    return ctx.prisma.todo.findMany({ where: { listId: todoList.id } })
+    return ctx.prisma.todo.findMany({ where: { listId: todoList.id }, orderBy: { completed: 'asc' } })
   }
 }

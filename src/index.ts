@@ -7,11 +7,12 @@ import TodoTemplateResolver from './resolvers/TodoTemplateResolver'
 import TodoListResolver from './resolvers/TodoListResolver'
 import { customAuthChecker } from './auth'
 import UserResolver from './resolvers/UserResolver'
+import TodoResolver from './resolvers/TodoResolver'
 const PORT = process.env.PORT || 4000
 
 const startServer = async () => {
   const schema = await buildSchema({
-    resolvers: [ListTemplateResolver, TodoTemplateResolver, TodoListResolver, UserResolver],
+    resolvers: [ListTemplateResolver, TodoTemplateResolver, TodoListResolver, UserResolver, TodoResolver],
     authChecker: customAuthChecker
   })
 
