@@ -17,8 +17,15 @@ import User from '../models/User'
 @Resolver((of) => ListTemplate)
 export default class ListTemplateResolver {
   @Query((returns) => [ListTemplate])
+  @Authorized()
   async listTemplates (@Ctx() ctx: Context) {
     return ctx.prisma.listTemplate.findMany()
+  }
+
+  @Query((returns) => [ListTemplate])
+  @Authorized()
+  async myListTemplates (@Ctx() ctx: Context) {
+    return ctx.prisma.listTemplate.findMany({ where: { userId: ctx.user.id } })
   }
 
   @Query(returns => ListTemplate)

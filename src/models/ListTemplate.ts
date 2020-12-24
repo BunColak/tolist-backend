@@ -28,3 +28,7 @@ export class AddListTemplateInput {
   @Field(type => [String])
   todos: string[]
 }
+
+@ObjectType()
+export class ListTemplateFilter {
+}

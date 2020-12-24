@@ -12,7 +12,7 @@ export const customAuthChecker: AuthChecker<Context, RoleType> = (
   }
 
   if (roles.includes('admin')) {
-    return true
+    return true // TODO
   }
 
   if (roles.includes('owner')) {
