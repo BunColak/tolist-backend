@@ -1,0 +1,41 @@
+kind: pipeline
+type: docker
+name: default
+
+workspace:
+  path: /build
+
+steps:
+- name: clean
+  image: docker:latest
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  commands:
+  - docker stop tolist || true
+  - docker rm tolist || true
+
+- name: build
+  image: docker:latest
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  commands:
+  - docker build . -t tolist
+
+- name: deploy
+  image: docker:latest
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  environment:
+    DATABASE_URL: 
+      from_secret: database_url 
+  commands:
+  - docker run -p 9005:4000 -e DATABASE_URL=$DATABASE_URL -p 9006:4000 --restart=unless-stopped --name tolist -d tolist 
+
+
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
