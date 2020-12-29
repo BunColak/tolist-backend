@@ -10,6 +10,7 @@ ENV DATABASE_URL=${DATABASE_URL}
 
 COPY . ./
 RUN yarn install
+RUN yarn prisma migrate deploy --preview-feature
 RUN yarn prisma generate
 RUN yarn build
 EXPOSE 4000
