@@ -24,7 +24,7 @@ steps:
     DATABASE_URL: 
       from_secret: database_url 
   commands:
-  - docker build . -t tolist
+  - docker build -e DATABASE_URL=$DATABASE_URL . -t tolist
 
 - name: deploy
   image: docker:latest
