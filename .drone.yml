@@ -20,6 +20,9 @@ steps:
   volumes:
   - name: dockersock
     path: /var/run/docker.sock
+  environment:
+    DATABASE_URL: 
+      from_secret: database_url 
   commands:
   - docker build . -t tolist
 
