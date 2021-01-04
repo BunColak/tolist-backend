@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  tolist:
+    build: .
+    expose:
+      - 4000
+    environment:
+      - DATABASE_URL
+    labels:
+      - traefik.http.routers.tolist.rule=Host(`tolist.bunserver.xyz`)
+      - traefik.http.routers.tolist.tls=true
+      - traefik.http.routers.tolist.tls.certresolver=myresolver
+      - traefik.docker.network=web
+    networks:
+      - web
+      
+networks:
+  web:
+    external: true
+      
+
+          
