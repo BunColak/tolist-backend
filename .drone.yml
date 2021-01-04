@@ -6,19 +6,18 @@ workspace:
   path: /build
 
 steps:
-- name: deploy
-  image: docker/compose
-  volumes:
-  - name: dockersock
-    path: /var/run/docker.sock
-  environment:
-    DATABASE_URL: 
-      from_secret: database_url 
-  commands:
-  - docker-compose up -d 
-
+  - name: deploy
+    image: docker/compose
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    environment:
+      DATABASE_URL:
+        from_secret: database_url
+    commands:
+      - docker-compose up -d
 
 volumes:
-- name: dockersock
-  host:
-    path: /var/run/docker.sock
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
